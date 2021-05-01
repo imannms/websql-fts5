@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "outDir": "../../dist/websql",
+    "rootDir": "src"
+  },
+  "extends": "../../tsconfig.json"
+}

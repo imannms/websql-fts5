@@ -1,0 +1,7 @@
+.tmp/
+demo/
+test/
+sqleet/
+node_modules/
+node-debug.log
+.git/
