@@ -24,6 +24,8 @@ export class Database {
   public static readonly mountName = '/sqleet';
   private static readonly isNodejs =
     typeof process === 'object' && typeof process.versions === 'object' && typeof process.versions.node === 'string';
+  private static readonly isServiceWorkerSupported =
+    !Database.isNodejs && typeof window !== 'undefined' && 'serviceWorker' in window.navigator;
   private static readonly isSharedWorkerSupported =
     !Database.isNodejs && typeof window !== 'undefined' && typeof SharedWorker !== 'undefined';
   private static readonly isWorkerSupported =
@@ -35,7 +37,7 @@ export class Database {
 
   private static MessageChannel: new () => MessageChannel;
 
-  private readonly worker: SharedWorker | Worker;
+  private readonly worker: ServiceWorker | SharedWorker | Worker;
   private databaseInstanceCreated: boolean = false;
 
   constructor(
@@ -60,6 +62,9 @@ export class Database {
       const {MessageChannel, Worker} = __non_webpack_require__('worker_threads');
       this.worker = new Worker(workerUrl);
       Database.MessageChannel = MessageChannel;
+    } else if (Database.isServiceWorkerSupported) {
+      console.log('websql: Using Service Worker');
+      this.worker = navigator.serviceWorker.controller as ServiceWorker;
     } else if (Database.isSharedWorkerSupported) {
       console.log('websql: Using Shared Worker');
       this.worker = new SharedWorker(workerUrl);
@@ -203,6 +208,8 @@ export class Database {
       if (Database.isNodejs) {
         // Send manually the port to the Node.JS Worker so we can reply to this MessageChannel
         (this.worker as Worker).postMessage({...input, transfer}, transfer);
+      } else if (Database.isServiceWorkerSupported) {
+        (this.worker as ServiceWorker).postMessage(input, transfer);
       } else if (Database.isSharedWorkerSupported) {
         // Use the port object to send messages to the Shared Worker
         // the same way as for Web Worker

@@ -4,6 +4,7 @@ export declare class Database {
     readonly options: DatabaseWorkerOptions;
     static readonly mountName = "/sqleet";
     private static readonly isNodejs;
+    private static readonly isServiceWorkerSupported;
     private static readonly isSharedWorkerSupported;
     private static readonly isWorkerSupported;
     private static readonly isIEOrLegacyEdge;

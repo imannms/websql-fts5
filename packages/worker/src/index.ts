@@ -38,6 +38,6 @@ if (isNodejs) {
   // Shared Worker
   self.onconnect = (event: any) => (event.ports[0].onmessage = (event: any) => MessageQueue.add(event));
 } else {
-  // Web Worker / Polyfilled Web Worker
+  // Service Worker / Web Worker / Polyfilled Web Worker
   self.addEventListener('message', (event: any) => MessageQueue.add(event));
 }
